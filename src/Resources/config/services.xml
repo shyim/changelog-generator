@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="ChangelogGeneratorPlugin\Command\ChangelogGeneratorCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="ChangelogGeneratorPlugin\Runner\Generator"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\Generator">
+            <argument type="tagged_iterator" tag="shopware.changelog_runner"/>
+            <argument>%kernel.project_dir%/platform</argument>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\ClassDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\MethodDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+    </services>
+</container>

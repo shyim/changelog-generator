@@ -1,0 +1,18 @@
+{
+    "name": "swag/changelog-generator-plugin",
+    "description": "Changelog generator",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ChangelogGeneratorPlugin\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "ChangelogGeneratorPlugin\\ChangelogGeneratorPlugin",
+        "label": {
+            "de-DE": "Changelog generator",
+            "en-GB": "Changelog generator"
+        }
+    }
+}

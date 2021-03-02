@@ -8,6 +8,7 @@ use PhpParser\ParserFactory;
 
 $container = require __DIR__ . '/boot/boot.php';
 
+/** @deprecated  */
 class ChangelogGenerator {
     private string $platformRepo;
 
