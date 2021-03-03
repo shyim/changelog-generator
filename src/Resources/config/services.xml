@@ -13,13 +13,30 @@
         <service id="ChangelogGeneratorPlugin\Runner\Generator">
             <argument type="tagged_iterator" tag="shopware.changelog_runner"/>
             <argument>%kernel.project_dir%/platform</argument>
+            <argument>%kernel.project_dir%/platform/changelog/_unreleased</argument>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\ClassAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\ClassRenamed">
+            <tag name="shopware.changelog_runner"/>
         </service>
 
         <service id="ChangelogGeneratorPlugin\Runner\PHP\ClassDeleted">
             <tag name="shopware.changelog_runner"/>
         </service>
 
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\MethodAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
         <service id="ChangelogGeneratorPlugin\Runner\PHP\MethodDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\PHP\MethodSignatureChanged">
             <tag name="shopware.changelog_runner"/>
         </service>
     </services>

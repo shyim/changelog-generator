@@ -26,6 +26,18 @@ class ChangelogGeneratorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->generator->run();
+        if (!$this->generator->hasRunners()) {
+            $output->writeln('<info>No runners configured</info>');
+
+            return Command::SUCCESS;
+        }
+
+        $start = \microtime(true);
+        $result = $this->generator->run();
+        $duration = \round((\microtime(true) - $start) * 1000, 2);
+
+        $output->writeln('Took: ' . $duration . ' ms');
+
+        return Command::SUCCESS;
     }
 }

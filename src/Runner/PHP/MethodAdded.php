@@ -7,7 +7,7 @@ namespace ChangelogGeneratorPlugin\Runner\PHP;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
-class MethodDeleted extends PHPRunner
+class MethodAdded extends PHPRunner
 {
     public function canProcess(FileState $fileState): bool
     {
@@ -22,12 +22,12 @@ class MethodDeleted extends PHPRunner
         $beforeMethods = $this->findMethods($beforeStmt);
         $afterMethods = $this->findMethods($afterStmt);
 
-        foreach ($beforeMethods as $name => $beforeMethod) {
-            if (!isset($afterMethods[$name])) {
-                $class = $this->getClassFQCN($beforeStmt);
+        foreach ($afterMethods as $name => $beforeMethod) {
+            if (!isset($beforeMethods[$name])) {
+                $class = $this->getClassFQCN($afterStmt);
                 $this->addSection(
-                    \sprintf('Removed method `%s::%s`', $class, $name),
-                    $this->getNamespaceSection($beforeStmt)
+                    \sprintf('Added method `%s::%s`', $class, $name),
+                    $this->getNamespaceSection($afterStmt)
                 );
             }
         }

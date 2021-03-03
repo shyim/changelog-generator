@@ -5,22 +5,22 @@ namespace ChangelogGeneratorPlugin\Runner\PHP;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
-class ClassDeleted extends PHPRunner
+class ClassAdded extends PHPRunner
 {
     public function canProcess(FileState $fileState): bool
     {
-        return $fileState->extension === 'php' && $fileState->state === State::DELETED;
+        return $fileState->extension === 'php' && $fileState->state === State::ADDED;
     }
 
     public function process(FileState $fileState): void
     {
-        $beforeStmt = $this->parser->parse(\implode(PHP_EOL, $fileState->before));
+        $afterStmt = $this->parser->parse(\implode(PHP_EOL, $fileState->after));
 
         $this->addSection(
             \sprintf(
-                'Removed class `%s`', $this->getClassFQCN($beforeStmt)
+                'Added class `%s`', $this->getClassFQCN($afterStmt)
             ),
-            $this->getNamespaceSection($beforeStmt)
+            $this->getNamespaceSection($afterStmt)
         );
     }
 }

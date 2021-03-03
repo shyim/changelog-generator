@@ -6,5 +6,6 @@ namespace ChangelogGeneratorPlugin\Runner;
 
 interface RunnerInterface
 {
-    public function process(FileStateCollection $collection): array;
+    public function process(FileState $fileState): void;
+    public function canProcess(FileState $fileState): bool;
 }
