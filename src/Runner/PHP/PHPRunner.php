@@ -130,7 +130,7 @@ abstract class PHPRunner extends Runner
         $regex = '/^\s*\*\s*@(?:(feature-)?deprecated)\s*(?:\([A-z0-9\_\:\-\s]*\))?\s*tag:v(?<version>(?:\d\.?){2,4})\s*\-*\s*(?<message>.*)$/m';
 
         if ($stmt->getDocComment()) {
-            dd($stmt->getDocComment());
+            #dd($stmt->getDocComment());
         }
 
         return [];

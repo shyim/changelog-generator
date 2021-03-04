@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
+use ChangelogGeneratorPlugin\Changelog\Change;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
@@ -27,7 +28,8 @@ class MethodDeleted extends PHPRunner
                 $class = $this->getClassFQCN($beforeStmt);
                 $this->addSection(
                     \sprintf('Removed method `%s::%s`', $class, $name),
-                    $this->getNamespaceSection($beforeStmt)
+                    $this->getNamespaceSection($beforeStmt),
+                    Change::REMOVED
                 );
             }
         }

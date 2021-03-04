@@ -2,6 +2,7 @@
 
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
+use ChangelogGeneratorPlugin\Changelog\Change;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
@@ -22,7 +23,9 @@ class ClassRenamed extends PHPRunner
                 'Renamed class `%s` to `%s`',
                 $this->getClassFQCN($beforeStmt),
                 $this->getClassFQCN($afterStmt)
-            )
+            ),
+            $this->getNamespaceSection($afterStmt),
+            Change::MODIFIED
         );
     }
 }

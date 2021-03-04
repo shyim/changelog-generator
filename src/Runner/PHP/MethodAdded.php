@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
+use ChangelogGeneratorPlugin\Changelog\Change;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
@@ -27,7 +28,8 @@ class MethodAdded extends PHPRunner
                 $class = $this->getClassFQCN($afterStmt);
                 $this->addSection(
                     \sprintf('Added method `%s::%s`', $class, $name),
-                    $this->getNamespaceSection($afterStmt)
+                    $this->getNamespaceSection($afterStmt),
+                    Change::ADDED
                 );
             }
         }

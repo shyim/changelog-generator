@@ -2,6 +2,8 @@
 
 namespace ChangelogGeneratorPlugin\Runner;
 
+use ChangelogGeneratorPlugin\Changelog\Changelog;
+use ChangelogGeneratorPlugin\Changelog\ChangelogBuilder;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
@@ -12,14 +14,21 @@ class Generator
      */
     private array $runners;
 
+    private ChangelogBuilder $changelogBuilder;
+
     private string $repositoryPath;
     private string $changelogPath;
     private Parser $parser;
 
-    public function __construct(iterable $runners, string $repositoryPath, string $changelogPath)
-    {
+    public function __construct(
+        iterable $runners,
+        string $repositoryPath,
+        string $changelogPath,
+        ChangelogBuilder $changelogBuilder
+    ) {
         $this->repositoryPath = $repositoryPath;
         $this->changelogPath = $changelogPath;
+        $this->changelogBuilder = $changelogBuilder;
         $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $this->runners = [];
 
@@ -32,8 +41,14 @@ class Generator
         }
     }
 
-    public function run(): ?string
+    public function run(): ?Changelog
     {
+        if (!\is_writable($this->changelogPath)) {
+            throw new \RuntimeException(
+                \sprintf('Directory %s is not writeable', $this->changelogPath)
+            );
+        }
+
         $files = $this->getModifiedFiles();
 
         if (!$this->runners || !$files) {
@@ -51,23 +66,15 @@ class Generator
         $sections = $runner->getSections();
 
         foreach ($sections as $key => $section) {
-            \sort($sections[$key]);
+            // Add > Change > Remove
+            \ksort($sections[$key]);
         }
 
-        if (!\is_writable($this->changelogPath)) {
-            throw new \RuntimeException(
-                \sprintf('Directory %s is not writeable', $this->changelogPath)
-            );
-        }
+        $changelog = $this->changelogBuilder->buildChangelog($sections);
 
-        \exec(\sprintf('git -C %s rev-parse --symbolic-full-name --abbrev-ref HEAD', $this->repositoryPath), $branch);
-        [$ticket, $name] = \explode('/', $branch[0]);
+        \file_put_contents($this->changelogPath .\DIRECTORY_SEPARATOR . $changelog->fileName, $changelog->fileContent);
 
-        dd(\strtoupper($ticket));
-
-        dd($sections);
-
-        return $sections;
+        return $changelog;
     }
 
     public function hasRunners(): bool
@@ -95,6 +102,12 @@ class Generator
 
             [$status, $file] = \explode("\t", $diff);
             $extension = \pathinfo($file, PATHINFO_EXTENSION);
+
+            $namespaces = \array_map('strtolower', \explode(\DIRECTORY_SEPARATOR, $file));
+
+            if (\in_array('test', $namespaces)) {
+                continue;
+            }
 
             if (!\in_array($status, State::STATES))  {
                 continue;

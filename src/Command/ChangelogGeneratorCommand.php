@@ -33,11 +33,33 @@ class ChangelogGeneratorCommand extends Command
         }
 
         $start = \microtime(true);
-        $result = $this->generator->run();
+        $changelog = $this->generator->run();
+
+        if (!$changelog) {
+            $output->writeln('<error>No changelog written</error>');
+            return Command::FAILURE;
+        }
+
+        $output->writeln('<success>Changelog written:</success>');
+        $output->writeln($changelog->fileName);
+
+        foreach ($changelog->sections as $section => $changes) {
+            $output->writeln(\sprintf('Changes in %s:', $section));
+
+            foreach ($changes as $change => $messages) {
+                $output->writeln(\sprintf("%s:\t%d", $change, \count($messages)));
+            }
+        }
+
         $duration = \round((\microtime(true) - $start) * 1000, 2);
 
         $output->writeln('Took: ' . $duration . ' ms');
 
         return Command::SUCCESS;
+    }
+
+    private function changesCount(): int
+    {
+
     }
 }

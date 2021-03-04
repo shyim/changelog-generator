@@ -14,6 +14,12 @@
             <argument type="tagged_iterator" tag="shopware.changelog_runner"/>
             <argument>%kernel.project_dir%/platform</argument>
             <argument>%kernel.project_dir%/platform/changelog/_unreleased</argument>
+            <argument type="service" id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder">
+            <argument>%kernel.plugin_dir%/ChangelogGeneratorPlugin/src/Resources/changelog</argument>
+            <argument>%kernel.project_dir%/platform</argument>
         </service>
 
         <service id="ChangelogGeneratorPlugin\Runner\PHP\ClassAdded">
