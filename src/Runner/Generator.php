@@ -4,82 +4,77 @@ namespace ChangelogGeneratorPlugin\Runner;
 
 use ChangelogGeneratorPlugin\Changelog\Changelog;
 use ChangelogGeneratorPlugin\Changelog\ChangelogBuilder;
-use PhpParser\Parser;
-use PhpParser\ParserFactory;
+use ChangelogGeneratorPlugin\Configuration\Configuration;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class Generator
 {
-    /**
-     * @var Runner[]
-     */
-    private array $runners;
-
     private ChangelogBuilder $changelogBuilder;
+    private Configuration $configuration;
 
     private string $repositoryPath;
-    private string $changelogPath;
-    private Parser $parser;
 
     public function __construct(
-        iterable $runners,
         string $repositoryPath,
-        string $changelogPath,
-        ChangelogBuilder $changelogBuilder
+        ChangelogBuilder $changelogBuilder,
+        Configuration $configuration
     ) {
         $this->repositoryPath = $repositoryPath;
-        $this->changelogPath = $changelogPath;
         $this->changelogBuilder = $changelogBuilder;
-        $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        $this->runners = [];
-
-        foreach ($runners as $runner) {
-            if (!$runner instanceof RunnerInterface) {
-                continue;
-            }
-
-            $this->runners[] = $runner;
-        }
+        $this->configuration = $configuration;
     }
 
-    public function run(): ?Changelog
+    public function run(ProgressBar $bar): ?Changelog
     {
-        if (!\is_writable($this->changelogPath)) {
-            throw new \RuntimeException(
-                \sprintf('Directory %s is not writeable', $this->changelogPath)
-            );
+        $errors = [];
+
+        /** @var Runner[] $runners */
+        $runners = $this->configuration->getActivePlaybook()->runners;
+
+        if (!$runners) {
+            throw new \RuntimeException('Playbook ' . $this->configuration->activePlaybookName . ' has no runners configured, aborting !');
         }
 
         $files = $this->getModifiedFiles();
 
-        if (!$this->runners || !$files) {
-            return null;
+        if (!$files) {
+            throw new \RuntimeException('No changes in range of commits, aborting !');
         }
 
+        $bar->setMaxSteps(\sizeof($files));
+        $bar->start();
+
         foreach ($files as $file) {
-            foreach ($this->runners as $runner) {
+            foreach ($runners as $runner) {
                 if ($runner->canProcess($file)) {
-                    $runner->process($file);
+                    try {
+                        $runner->process($file);
+                    } catch (\Throwable $e) {
+                        $errors[] = [
+                            'file' => $file->path,
+                            'runner' => \get_class($runner),
+                            'message' => $e->getMessage()
+                        ];
+
+                        continue;
+                    }
                 }
             }
+
+            $bar->advance();
         }
 
         $sections = $runner->getSections();
 
+        if (!$sections) {
+            throw new \RuntimeException('Generator has detected no changes, aborting !');
+        }
+
         foreach ($sections as $key => $section) {
-            // Add > Change > Remove
             \ksort($sections[$key]);
         }
 
-        $changelog = $this->changelogBuilder->buildChangelog($sections);
-
-        \file_put_contents($this->changelogPath .\DIRECTORY_SEPARATOR . $changelog->fileName, $changelog->fileContent);
-
-        return $changelog;
-    }
-
-    public function hasRunners(): bool
-    {
-        return \count($this->runners) > 0;
+        return $this->changelogBuilder->buildChangelog($sections, $errors);
     }
 
     /**
@@ -89,7 +84,17 @@ class Generator
     {
         $files = [];
 
-        \exec(\sprintf('git -C %s log HEAD^..HEAD --pretty=format: --name-status', $this->repositoryPath), $diffs);
+        \exec(
+            \escapeshellcmd(
+                \sprintf(
+                    "git -C %s diff %s..%s --name-status",
+                    $this->repositoryPath,
+                    $this->configuration->fromDiff,
+                    $this->configuration->toDiff
+                )
+            ),
+            $diffs
+        );
 
         if (!$diffs) {
             return [];
@@ -100,15 +105,23 @@ class Generator
                 continue;
             }
 
-            [$status, $file] = \explode("\t", $diff);
+            [$status, $file] = \explode("\t", $diff, 2);
             $extension = \pathinfo($file, PATHINFO_EXTENSION);
 
             $namespaces = \array_map('strtolower', \explode(\DIRECTORY_SEPARATOR, $file));
 
+            foreach ($this->configuration->excludes as $exclude) {
+                if (\strpos($file, $exclude)) {
+                    continue;
+                }
+            }
+
+            // skip tests
             if (\in_array('test', $namespaces)) {
                 continue;
             }
 
+            // unknown git state modifier
             if (!\in_array($status, State::STATES))  {
                 continue;
             }
@@ -117,11 +130,31 @@ class Generator
             $after = [];
 
             if ($status !== State::ADDED) {
-                \exec(sprintf('git -C %s show HEAD^:%s', $this->repositoryPath, $file), $before);
+                \exec(
+                    \escapeshellcmd(
+                        \sprintf(
+                            "git -C %s show %s:%s",
+                            $this->repositoryPath,
+                            $this->configuration->fromDiff,
+                            $file
+                        )
+                    ),
+                    $before
+                );
             }
 
             if ($status !== State::DELETED) {
-                \exec(sprintf('git -C %s show HEAD:%s', $this->repositoryPath, $file), $after);
+                \exec(
+                    \escapeshellcmd(
+                        \sprintf(
+                            "git -C %s show %s:%s",
+                            $this->repositoryPath,
+                            $this->configuration->toDiff,
+                            $file
+                        )
+                    ),
+                    $after
+                );
             }
 
             $fileState = new FileState($status, $file, $extension, $before, $after);

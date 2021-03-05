@@ -2,7 +2,6 @@
 
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
-use ChangelogGeneratorPlugin\Changelog\Change;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
@@ -17,12 +16,27 @@ class ClassDeleted extends PHPRunner
     {
         $beforeStmt = $this->parser->parse(\implode(PHP_EOL, $fileState->before));
 
-        $this->addSection(
-            \sprintf(
-                'Removed class `%s`', $this->getClassFQCN($beforeStmt)
-            ),
-            $this->getNamespaceSection($beforeStmt),
-            Change::REMOVED
-        );
+        $fqcn = $this->getClassFQCN($beforeStmt);
+
+        if ($fqcn) {
+            $this->addSection(
+                \sprintf(
+                    'Removed class `%s`', $fqcn
+                ),
+                $fileState
+            );
+        } else {
+            $this->addSection(
+                \sprintf(
+                    'Removed file `%s`', $fileState->path
+                ),
+                $fileState
+            );
+        }
+    }
+
+    public function getSubject(): string
+    {
+        return 'php_class_deleted';
     }
 }

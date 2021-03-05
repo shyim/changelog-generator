@@ -11,6 +11,7 @@ class Changelog
     public ?string $authorGithub = null;
 
     public array $sections;
+    public array $errors = [];
 
     public string $fileName;
     public string $fileContent;

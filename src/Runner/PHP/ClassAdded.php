@@ -2,7 +2,6 @@
 
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
-use ChangelogGeneratorPlugin\Changelog\Change;
 use ChangelogGeneratorPlugin\Runner\FileState;
 use ChangelogGeneratorPlugin\Runner\State;
 
@@ -17,12 +16,27 @@ class ClassAdded extends PHPRunner
     {
         $afterStmt = $this->parser->parse(\implode(PHP_EOL, $fileState->after));
 
-        $this->addSection(
-            \sprintf(
-                'Added class `%s`', $this->getClassFQCN($afterStmt)
-            ),
-            $this->getNamespaceSection($afterStmt),
-            Change::ADDED
-        );
+        $fqcn = $this->getClassFQCN($afterStmt);
+
+        if ($fqcn) {
+            $this->addSection(
+                \sprintf(
+                    'Added class `%s`', $fqcn
+                ),
+                $fileState
+            );
+        } else {
+            $this->addSection(
+                \sprintf(
+                    'Added file `%s`', $fileState->path
+                ),
+                $fileState
+            );
+        }
+    }
+
+    public function getSubject(): string
+    {
+        return 'php_class_added';
     }
 }

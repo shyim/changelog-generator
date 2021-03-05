@@ -15,12 +15,10 @@ author_github: {{ changelog.authorGithub }}
 ---
 {% endblock %}
 {% block sections %}
-{% for section,entries in changelog.sections %}
+{% for section,messages in changelog.sections %}
 # {{ section }}
-{% for type,messages in entries %}
 {% for message in messages %}
-  * {{ message }}
-{% endfor %}
+* {{ message.message }}
 {% endfor %}
 ___
 {% endfor %}

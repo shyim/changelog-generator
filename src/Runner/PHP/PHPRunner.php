@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ChangelogGeneratorPlugin\Runner\PHP;
 
 use ChangelogGeneratorPlugin\Runner\Runner;
-use PhpParser\Comment\Doc;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
@@ -13,7 +12,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\NodeDumper;
+use PhpParser\Node\Stmt\Trait_;
 use PhpParser\NodeFinder;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
@@ -38,7 +37,11 @@ abstract class PHPRunner extends Runner
             $class = $this->finder->findFirstInstanceOf($stmts, Interface_::class);
 
             if ($class === null) {
-                return null;
+                $class = $this->finder->findFirstInstanceOf($stmts, Trait_::class);
+
+                if ($class === null) {
+                    return null;
+                }
             }
         }
 
@@ -51,19 +54,6 @@ abstract class PHPRunner extends Runner
         $namespaceName = (string) $namespace->name;
 
         return $namespaceName . '\\' . $className;
-    }
-
-    final protected function getNamespaceSection(array $stmts): string
-    {
-        /** @var Namespace_ $namespace */
-        $namespace = $this->finder->findFirstInstanceOf($stmts, Namespace_::class);
-
-        if ($namespace && $namespace->name && $parts = $namespace->name->parts) {
-            $partsWithoutRoot = \array_diff($parts, ['Shopware']);
-            return \array_shift($partsWithoutRoot);
-        }
-
-        return 'Other';
     }
 
     /**
