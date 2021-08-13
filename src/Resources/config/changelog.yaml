@@ -1,0 +1,70 @@
+changelog:
+    excludes:
+        - adr/
+        - changelog/
+    playbooks:
+        shopware:
+            template: 'changelog.md.twig'
+            runners:
+                - php_class_added
+                - php_method_added
+                - php_method_parameter_added
+                - php_method_parameter_type_added
+                - php_method_return_type_added
+                - php_method_parameter_type_changed
+                - php_method_return_type_changed
+                - php_class_renamed
+                - php_class_removed
+                - php_method_deleted
+                - php_method_parameter_removed
+                - php_method_parameter_type_removed
+                - php_method_return_type_removed
+                - js_component_added
+                - js_component_computed_added
+                - js_component_data_added
+                - js_component_method_added
+                - js_component_mixins_added
+                - js_component_injection_added
+                - js_component_lifecycle_added
+                - js_component_deleted
+                - js_component_computed_deleted
+                - js_component_data_deleted
+                - js_component_method_deleted
+                - js_component_mixins_deleted
+                - js_component_injection_deleted
+                - js_component_lifecycle_deleted
+                - twig_block_added
+                - twig_block_deleted
+                - composer_dependency_added
+                - composer_dependency_removed
+                - composer_dependency_bumped_up
+                - composer_dependency_dropped_down
+                - npm_package_added
+                - npm_package_removed
+                - npm_package_bumped_up
+                - npm_package_dropped_down
+        breaking:
+            template: 'changelog.md.twig'
+            runners:
+                - php_class_renamed
+                - php_class_removed
+                - php_method_deleted
+                - php_method_parameter_removed
+                - php_method_parameter_type_changed
+                - php_method_parameter_type_removed
+                - php_method_return_type_changed
+                - php_method_return_type_removed
+                - js_component_deleted
+                - js_component_computed_deleted
+                - js_component_data_deleted
+                - js_component_method_deleted
+                - js_component_mixin_deleted
+                - js_component_injection_deleted
+                - js_component_lifecycle_deleted
+                - twig_block_deleted
+                - composer_dependency_removed
+                - composer_dependency_bumped_up
+                - composer_dependency_dropped_down
+                - npm_package_removed
+                - npm_package_bumped_up
+                - npm_package_dropped_down

@@ -1,0 +1,197 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="true" />
+        <service id="ChangelogGeneratorPlugin\Command\ChangelogGeneratorCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="ChangelogGeneratorPlugin\Runner\Generator"/>
+            <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
+            <argument>%kernel.project_dir%/platform/changelog/_unreleased</argument>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Runner\Generator">
+            <argument>%kernel.project_dir%/platform</argument>
+            <argument type="service" id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder"/>
+            <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder">
+            <argument>%kernel.plugin_dir%/ChangelogGeneratorPlugin/src/Resources/changelog</argument>
+            <argument>%kernel.project_dir%/platform</argument>
+            <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Configuration\ConfigurationFactory">
+            <argument type="service" id="service_container"/>
+        </service>
+
+        <service id="ChangelogGeneratorPlugin\Configuration\Configuration">
+            <factory service="ChangelogGeneratorPlugin\Configuration\ConfigurationFactory" method="createConfiguration"/>
+            <argument>%kernel.plugin_dir%/ChangelogGeneratorPlugin/src/Resources/config/changelog.yaml</argument>
+        </service>
+
+        <service id="php_class_added" class="ChangelogGeneratorPlugin\Runner\PHP\ClassAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_class_renamed" class="ChangelogGeneratorPlugin\Runner\PHP\ClassRenamed">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_class_removed" class="ChangelogGeneratorPlugin\Runner\PHP\ClassDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_added" class="ChangelogGeneratorPlugin\Runner\PHP\MethodAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_deleted" class="ChangelogGeneratorPlugin\Runner\PHP\MethodDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_parameter_added" class="ChangelogGeneratorPlugin\Runner\PHP\MethodParameterAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_parameter_removed" class="ChangelogGeneratorPlugin\Runner\PHP\MethodParameterRemoved">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_parameter_type_added" class="ChangelogGeneratorPlugin\Runner\PHP\MethodParameterTypeAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_parameter_type_changed" class="ChangelogGeneratorPlugin\Runner\PHP\MethodParameterTypeChanged">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_parameter_type_removed" class="ChangelogGeneratorPlugin\Runner\PHP\MethodParameterTypeRemoved">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_return_type_added" class="ChangelogGeneratorPlugin\Runner\PHP\MethodReturnTypeAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_return_type_changed" class="ChangelogGeneratorPlugin\Runner\PHP\MethodReturnTypeChanged">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="php_method_return_type_removed" class="ChangelogGeneratorPlugin\Runner\PHP\MethodReturnTypeRemoved">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_computed_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentComputedAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_computed_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentComputedDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_method_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentMethodAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_method_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentMethodDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_prop_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentPropAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_prop_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentPropDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_mixin_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentMixinAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_mixin_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentMixinDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_data_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentDataAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_data_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentDataDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_injection_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentInjectionAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_injection_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentInjectionDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_lifecycle_added" class="ChangelogGeneratorPlugin\Runner\JS\ComponentLifecycleAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="js_component_lifecycle_deleted" class="ChangelogGeneratorPlugin\Runner\JS\ComponentLifecycleDeleted">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="twig_base" class="ChangelogGeneratorPlugin\Runner\Twig\TwigRunner" abstract="true">
+            <argument type="service" id="twig"/>
+        </service>
+
+        <service id="twig_block_added" class="ChangelogGeneratorPlugin\Runner\Twig\BlockAdded" parent="twig_base">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="twig_block_deleted" class="ChangelogGeneratorPlugin\Runner\Twig\BlockDeleted" parent="twig_base">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="composer_dependency_added" class="ChangelogGeneratorPlugin\Runner\Composer\DependencyAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="composer_dependency_bumped_up" class="ChangelogGeneratorPlugin\Runner\Composer\DependencyBumpedUp">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="composer_dependency_dropped_down" class="ChangelogGeneratorPlugin\Runner\Composer\DependencyDroppedDown">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="composer_dependency_removed" class="ChangelogGeneratorPlugin\Runner\Composer\DependencyRemoved">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="npm_package_added" class="ChangelogGeneratorPlugin\Runner\NPM\PackageAdded">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="npm_package_bumped_up" class="ChangelogGeneratorPlugin\Runner\NPM\PackageBumpedUp">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="npm_package_dropped_down" class="ChangelogGeneratorPlugin\Runner\NPM\PackageDroppedDown">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+
+        <service id="npm_package_removed" class="ChangelogGeneratorPlugin\Runner\NPM\PackageRemoved">
+            <tag name="shopware.changelog_runner"/>
+        </service>
+    </services>
+</container>

@@ -1,0 +1,26 @@
+{% block changelog %}
+{% block header %}
+---
+title: {{ changelog.title }}
+issue: {{ changelog.issue }}
+{% if changelog.author %}
+author: {{ changelog.author }}
+{% endif %}
+{% if changelog.authorEmail %}
+author_email: {{ changelog.authorEmail }}
+{% endif %}
+{% if changelog.authorGithub %}
+author_github: {{ changelog.authorGithub }}
+{% endif %}
+---
+{% endblock %}
+{% block sections %}
+{% for section,messages in changelog.sections %}
+# {{ section }}
+{% for message in messages %}
+* {{ message.message }}
+{% endfor %}
+___
+{% endfor %}
+{% endblock %}
+{% endblock %}
