@@ -10,18 +10,18 @@
             <tag name="console.command"/>
             <argument type="service" id="ChangelogGeneratorPlugin\Runner\Generator"/>
             <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
-            <argument>%kernel.project_dir%/platform/changelog/_unreleased</argument>
+            <argument>%kernel.project_dir%/changelog/_unreleased</argument>
         </service>
 
         <service id="ChangelogGeneratorPlugin\Runner\Generator">
-            <argument>%kernel.project_dir%/platform</argument>
+            <argument>%kernel.project_dir%</argument>
             <argument type="service" id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder"/>
             <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
         </service>
 
         <service id="ChangelogGeneratorPlugin\Changelog\ChangelogBuilder">
             <argument>%kernel.plugin_dir%/ChangelogGeneratorPlugin/src/Resources/changelog</argument>
-            <argument>%kernel.project_dir%/platform</argument>
+            <argument>%kernel.project_dir%</argument>
             <argument type="service" id="ChangelogGeneratorPlugin\Configuration\Configuration"/>
         </service>
 

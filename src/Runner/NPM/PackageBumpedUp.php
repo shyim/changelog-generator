@@ -19,7 +19,7 @@ class PackageBumpedUp extends NPMRunner
                 if (Comparator::greaterThan($this->parseVersion($afterVersion), $this->parseVersion($beforeVersion))) {
                     $this->addSection(
                         \sprintf(
-                            "Bumped up npm package `%s` from version `%s` to version `%s`.",
+                            "Changed dependency version of npm package `%s` from version `%s` to version `%s`.",
                             $beforePackage,
                             $beforeVersion,
                             $afterVersion

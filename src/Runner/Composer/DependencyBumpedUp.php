@@ -18,7 +18,7 @@ class DependencyBumpedUp extends ComposerRunner
                 if (Comparator::greaterThan($this->parseVersion($afterVersion), $this->parseVersion($beforeVersion))) {
                     $this->addSection(
                         \sprintf(
-                            'Bumped up dependency `%s` from version `%s` to version `%s`',
+                            'Changed dependency version of `%s` from version `%s` to version `%s`',
                             $beforeDependency,
                             $beforeVersion,
                             $afterVersion
